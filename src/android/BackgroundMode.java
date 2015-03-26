@@ -28,11 +28,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.util.Log;
+import android.view.WindowManager;
+
+import com.ionicframework.background381706.MainActivity;
 
 public class BackgroundMode extends CordovaPlugin {
 
@@ -114,6 +121,11 @@ public class BackgroundMode extends CordovaPlugin {
             return true;
         }
 
+        if (action.equalsIgnoreCase("foreground")) {
+            foregroundMode();
+            return true;
+        }
+
         return false;
     }
 
@@ -169,6 +181,47 @@ public class BackgroundMode extends CordovaPlugin {
     private void disableMode() {
         stopService();
         isDisabled = true;
+    }
+
+    /**
+     * Enable the foreground mode.
+     */
+    private void foregroundMode() {
+        Context context = cordova.getActivity().getApplicationContext();
+        Activity activity = cordova.getActivity();
+
+        //PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
+        boolean isScreenOn = false; //pm.isScreenOn();
+
+        if(!isScreenOn) {
+            // awake device
+            //PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "aPhone");
+            //wl.acquire();
+            // do something?
+
+            Runnable runTask = new Runnable() {
+                public void run(){
+                    cordova.getActivity().getWindow().addFlags(
+                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                }
+            };
+
+            activity.runOnUiThread(runTask);
+            
+            //wl.release();
+        }
+
+        Intent intent = new Intent(context, cordova.getActivity().getClass());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP); // You need this if starting
+        //  the activity from a service
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        context.startActivity(intent);
     }
 
     /**

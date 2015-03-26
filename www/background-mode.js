@@ -88,6 +88,14 @@ exports.disable = function () {
     cordova.exec(null, null, 'BackgroundMode', 'disable', []);
 };
 
+exports.screenOff = function () {
+    cordova.exec(null, null, 'BackgroundMode', 'screenOff', []);
+};
+
+exports.foreground = function () {
+    cordova.exec(null, null, 'BackgroundMode', 'foreground', []);
+};
+
 /**
  * List of all available options with their default value.
  *
