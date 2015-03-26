@@ -39,8 +39,6 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.ionicframework.background381706.MainActivity;
-
 public class BackgroundMode extends CordovaPlugin {
 
     // Event types for callbacks
