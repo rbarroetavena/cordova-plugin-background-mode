@@ -188,14 +188,13 @@ public class BackgroundMode extends CordovaPlugin {
         Context context = cordova.getActivity().getApplicationContext();
         Activity activity = cordova.getActivity();
 
-        //PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = false; //pm.isScreenOn();
 
         if(!isScreenOn) {
             // awake device
-            //PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "aPhone");
-            //wl.acquire();
+            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "aPhone");
+            wl.acquire();
             // do something?
 
             Runnable runTask = new Runnable() {
@@ -210,7 +209,7 @@ public class BackgroundMode extends CordovaPlugin {
 
             activity.runOnUiThread(runTask);
             
-            //wl.release();
+            wl.release();
         }
 
         Intent intent = new Intent(context, cordova.getActivity().getClass());
