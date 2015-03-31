@@ -39,6 +39,8 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.ionicframework.background381706.MainActivity;
+
 public class BackgroundMode extends CordovaPlugin {
 
     // Event types for callbacks
@@ -200,7 +202,7 @@ public class BackgroundMode extends CordovaPlugin {
             Runnable runTask = new Runnable() {
                 public void run(){
                     cordova.getActivity().getWindow().addFlags(
-                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                            //WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
                             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
