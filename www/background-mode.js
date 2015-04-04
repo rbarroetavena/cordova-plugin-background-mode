@@ -96,6 +96,10 @@ exports.foreground = function () {
     cordova.exec(null, null, 'BackgroundMode', 'foreground', []);
 };
 
+exports.background = function () {
+    cordova.exec(null, null, 'BackgroundMode', 'background', []);
+};
+
 /**
  * List of all available options with their default value.
  *
