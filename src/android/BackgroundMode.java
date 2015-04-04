@@ -124,6 +124,11 @@ public class BackgroundMode extends CordovaPlugin {
             return true;
         }
 
+        if (action.equalsIgnoreCase("background")) {
+            backgroundMode();
+            return true;
+        }
+
         return false;
     }
 
@@ -151,6 +156,17 @@ public class BackgroundMode extends CordovaPlugin {
         super.onResume(multitasking);
         inBackground = false;
         stopService();
+
+        Runnable runClearTask = new Runnable() {
+            public void run() {
+                cordova.getActivity().getWindow().clearFlags(
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        //WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+            }
+        };
+        cordova.getActivity().runOnUiThread(runClearTask);
     }
 
     /**
@@ -197,41 +213,38 @@ public class BackgroundMode extends CordovaPlugin {
             wl.acquire();
             // do something?
 
-            Runnable runTask = new Runnable() {
+            Runnable runSetTask = new Runnable() {
                 public void run(){
                     cordova.getActivity().getWindow().addFlags(
                             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
                             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-                }
+                };
             };
 
-            activity.runOnUiThread(runTask);
-            
+            activity.runOnUiThread(runSetTask);
+
+            Intent intent = new Intent(context, cordova.getActivity().getClass());
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP); // You need this if starting
+            //  the activity from a service
+            intent.setAction(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            context.startActivity(intent);
+
             wl.release();
         }
+    }
 
-        Intent intent = new Intent(context, cordova.getActivity().getClass());
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP); // You need this if starting
-        //  the activity from a service
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        context.startActivity(intent);
-
-        Runnable runTask = new Runnable() {
-            public void run(){
-                cordova.getActivity().getWindow().clearFlags(
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                );
-            }
-        };
-        activity.runOnUiThread(runTask);
-
+    /**
+     * Enable the foreground mode.
+     */
+    private void backgroundMode() {
+        boolean bRes = false;
+        Context context = cordova.getActivity().getApplicationContext();
+        Activity activity = cordova.getActivity();
+        bRes = activity.moveTaskToBack(true);
     }
 
     /**
