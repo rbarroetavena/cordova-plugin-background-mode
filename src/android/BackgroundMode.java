@@ -160,13 +160,15 @@ public class BackgroundMode extends CordovaPlugin {
         Runnable runClearTask = new Runnable() {
             public void run() {
                 cordova.getActivity().getWindow().clearFlags(
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        //WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        // | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        // | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        );
             }
         };
         cordova.getActivity().runOnUiThread(runClearTask);
+        Log.d("aPhone", "XXX onResume");
     }
 
     /**
@@ -206,20 +208,23 @@ public class BackgroundMode extends CordovaPlugin {
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = false; //pm.isScreenOn();
+        Log.d("aPhone", "XXX foregroundMode");
 
         if(!isScreenOn) {
             // awake device
-            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "aPhone");
+            //PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "aPhone");
+            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "aPhone");
             wl.acquire();
             // do something?
 
             Runnable runSetTask = new Runnable() {
                 public void run(){
                     cordova.getActivity().getWindow().addFlags(
-                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                            | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                            | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                            | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    );
                 };
             };
 
