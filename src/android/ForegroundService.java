@@ -171,7 +171,7 @@ public class ForegroundService extends Service {
         String pkgName  = context.getPackageName();
 
         int resId;
-        resId = res.getIdentifier("icon", "drawable", pkgName);
+        resId = res.getIdentifier("icon_notification", "drawable", pkgName);
 
         return resId;
     }
